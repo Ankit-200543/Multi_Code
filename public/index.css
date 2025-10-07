@@ -1,0 +1,290 @@
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        /* 💡 Style to constrain the overall width and center the forms */
+ 
+        .navbar {
+               z-index:100;
+               position: fixed;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  /* Slightly Lighter Dark Background */
+  background-color: #16213e; /* Darker Blue/Gray */
+  color: #e5e5e5; /* Light Gray Text */
+  width: 98%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle Shadow */
+  border-bottom: 1px solid red;
+}
+
+.navbar .brand {
+  font-size: 20px;
+  font-weight: bold;
+  margin-left:1%;
+}
+
+.navbar button {
+  padding: 8px 16px;
+  font-size: 16px;
+  /* Primary Action Color: Cyan/Teal */
+  background-color: #00bcd4;
+  border: none;
+  margin-right:2%;
+  border-radius: 4px;
+  color: #1a1a2e; /* Dark text for contrast on bright button */
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.navbar button:hover {
+  background-color: #008394; /* Darker Cyan/Teal */
+}
+#Homepage {
+    /* Base for the main content block */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    line-height: 1.6;
+    color: #333; /* Dark gray text */
+    margin: 40px auto; /* Center the div on the page */
+    padding: 30px;
+    background-color: #fff; /* White background for the content */
+    border: 1px solid #eee; /* Very light border */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Subtle shadow */
+}
+
+/* Headings */
+#Homepage h2 {
+    font-weight: 600;
+    font-size: 1.6em;
+    color: #1a1a1a;
+    margin-top: 1.8em;
+    margin-bottom: 0.6em;
+    border-bottom: 2px solid #007bff; /* Primary accent line */
+    padding-bottom: 5px;
+    display: block; /* Ensure the border spans the full width */
+}
+
+/* Main Title (usually h1, but h2 in your HTML) */
+#Homepage h2:first-of-type {
+    font-size: 2em;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee; /* Lighter separator for the main title */
+    padding-bottom: 15px;
+}
+
+/* Step Headings */
+#Homepage h3 {
+    font-size: 1.1em;
+    color: #555;
+    text-transform: uppercase;
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+}
+
+/* Paragraphs */
+#Homepage p {
+    margin-bottom: 1.5em;
+}
+
+/* Lists (Unordered and Ordered) */
+#Homepage ul, #Homepage ol {
+    padding-left: 20px;
+    margin-bottom: 1.5em;
+}
+
+#Homepage li {
+    margin-bottom: 0.5em;
+}
+
+/* Feature List Specific (for "Duocode allows two users to") */
+#Homepage h2 + ul {
+    list-style: none; /* Remove default bullets */
+    padding-left: 0;
+}
+
+#Homepage h2 + ul li::before {
+    content: "→"; /* Simple arrow bullet */
+    color: #007bff;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+
+#Homepage #image1,#Homepage #video{
+    display: block;
+    width: 70%;
+    max-width: 80%;
+    height: auto;
+    margin: 30px 15%;
+    border-radius: 4px;
+    border:4px yellowgreen;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); /* Minimalist framing */
+}
+
+/* GitHub Link */
+#Homepage a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.2s;
+    display: inline-block; /* Helps with padding/margin control */
+    margin-top: 20px;
+}
+
+#Homepage a:hover {
+    border-bottom: 1px solid #007bff;
+}
+#github{
+    height:20px;
+    width: 20px;
+}
+
+
+        .option-section {
+           width: 100%;
+           z-index:100;
+           position: Fixed;
+           left:35%;
+           top:20%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            width:400px;
+            border: 1px solid;
+            border-radius: 10px;
+        }
+        .option-section h3 {
+            margin-top: 0;
+            color: #555;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; 
+        }
+        .action-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #btn-create {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        #btn-create:hover {
+            background-color: #45a049; 
+        }
+        #btn-join {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+        }
+        #btn-join:hover {
+            background-color: #007bb5; 
+        }
+        #openNew{
+            width: 100%;
+            padding: 12px;
+            margin-top:2%;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            background: skyblue;
+        }
+        #CloseExist{
+            align-self: right;
+            height:10px;
+            width: 10px;
+            font-size:10px;
+            background-color: transparent;
+            border: none;
+            margin-left:90%;
+            cursor: pointer;
+
+        }
+        #CloseNew{
+           align-self: right;
+            height:10px;
+            width: 10px;
+            font-size:10px;
+            background-color: transparent;
+            border: none;
+            margin-left:90%;
+            cursor: pointer; 
+        }
+        @media (max-width: 480px) {
+    .navbar {
+        padding: 8px 12px;
+    }
+
+    .navbar .brand {
+        font-size: 1rem;
+    }
+
+    .navbar button {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        margin-right: 3%;
+    }
+
+    #Homepage h2 {
+        font-size: 1.4em;
+    }
+
+    #Homepage h2:first-of-type {
+        font-size: 1.6em;
+    }
+    #Homepage #image1,#Homepage #video{
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 10px 0%;
+
+}
+#github{
+    height:40px;
+    width: 40px;
+}
+
+
+    .option-section {
+        width: 90%;
+        top: 30%;
+        left:2%;
+
+        padding: 10px;
+    }
+
+    input[type="text"], .action-button {
+        font-size: 14px;
+    }
+}

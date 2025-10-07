@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java Playground Room : <%= roomNo %></title>
+    <link rel="icon" type="image/png" href="../public/coding.png">
+
+      <link rel="stylesheet" href="/code.css">
+
+  
+</head>
+<body>
+   <div class="navbar">
+    <div class="brand">Welcome to MultiCode Playground</div>
+    <button id="leave">Click To leave</button>
+  </div>
+<div id="Details">
+    <h1 id="DisplayRoomNo"></h1>
+    <div id="players">
+        <p id="Player1"></p>
+        <button id="seeUsers">Open User List</button>
+    </div>
+
+</div>
+  <div id="playground">
+    <div id="coding">
+      <p id="code_head">💻 Write Your Java Code Here</p>
+      <textarea id="code" rows="10" cols="60">
+public class Main {
+public static void main(String[] args) {
+System.out.println(" Hello from MultiCode! ");
+}
+}
+      </textarea>
+      <button id="run" onclick="runCode()">▶ Run Code</button>
+      <p id="Changes">Nothing change happening...</p>
+    </div>
+
+    <div id="right">
+      <div style="flex:1; display:flex; flex-direction:column;">
+        <h3>🧮 Input</h3>
+        <textarea id="input" placeholder="Enter input values here..."></textarea>
+      </div>
+      <div style="flex:1; display:flex; flex-direction:column;">
+        <h3>🖥 Output</h3>
+        <textarea id="output" placeholder="Your output will appear here..." readonly></textarea>
+      </div>
+    </div>
+    <div id="UserList" style="display: none;">
+    <p id="Other">Users List</p>
+    <ol id="members"></ol>
+    <h3 id="Total"></h3>
+
+    </div>
+
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // --- Configuration and Initialization ---
+    
+    // **Note:** These variables use template engine syntax and must be defined server-side.
+    const ROOM_NUMBER = "<%= roomNo %>";
+    const USERNAME = "<%= userName %>";
+    let Output="";
+    
+    // Element References
+    const DisplayRoomNo=document.getElementById("DisplayRoomNo")
+    const Player1=document.getElementById("Player1")
+    const Player2=document.getElementById("Player2")
+    const CodeText = document.getElementById("code");
+    const inputText = document.getElementById("input");
+    const outputBox = document.getElementById("output");
+    const runButton = document.getElementById("run");
+    const Home=document.getElementById("leave");
+    const Changes=document.getElementById("Changes");
+    const members=document.getElementById("members");
+    const Total=document.getElementById("Total");
+    const Open=document.getElementById("seeUsers");
+    const USERS=document.getElementById("UserList");
+
+
+    // Socket Initialization and State
+    const socket = io();
+    let Length=0;
+    let mySocketId = "";
+
+    // Logging initial setup
+    DisplayRoomNo.innerText="Room NO : "+ROOM_NUMBER;
+    Player1.innerText="Name : "+USERNAME;
+   
+
+
+
+    // --- Core Functions ---
+
+    /**
+     * Sends the current code and input to the external piston API for execution
+     * and displays the output.
+     */
+    async function runCode() {
+      const code = CodeText.value;
+      const input = inputText.value;
+
+      // Simple loading state
+      outputBox.value = "Fetching output.....";
+
+      try {
+        const response = await fetch("https://emkc.org/api/v2/piston/execute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            language: "java",
+            version: "15.0.2",
+            files: [{ name: "Main.java", content: code }],
+            stdin: input
+          })
+        });
+
+        const result = await response.json();
+        
+        // Prioritize standard output, then standard error, then a default message
+        Output =
+          result.run.stdout ||
+          result.run.stderr ||
+          "⚠️ No output or an error occurred.";
+        if (otherUserName && otherUserSocketId) {
+         socket.emit("output", {
+        roomNo: ROOM_NUMBER, // send to entire room
+        output: Output
+});
+
+          }
+          
+      } catch (error) {
+        outputBox.value = "❌ Error: " + error.message;
+      } 
+ 
+    }
+
+   
+
+
+    // --- Socket.io Handlers ---
+
+    // 1. Initial Connection Success
+    socket.on("Connected_Successful", (data) => {
+      mySocketId = data;
+      Length=Length+1;
+      Total.innerText="TotalUsers : "+Length;
+
+      console.log("Successfully connected! My ID:", mySocketId);
+      socket.emit("joinRoom", { roomNo: ROOM_NUMBER, userName: USERNAME });
+    });
+
+    // 2. User List Update (finding the other user)
+socket.on("userList", (users) => {
+  members.innerHTML = "";
+  Length=1;
+
+  // Add yourself
+  const selfLi = document.createElement("p");
+  selfLi.textContent = Length+"."+USERNAME+ "(You) ";
+  selfLi.style.fontWeight = "bold";
+  selfLi.style.color = "green";
+  members.appendChild(selfLi);
+
+  // Add all other users
+  const otherUsers = users.filter(user => user.id !== mySocketId);
+  otherUsers.forEach(user => {
+    Length=Length+1;
+    const li = document.createElement("p");
+    li.textContent =Length +"."+user.username;
+    members.appendChild(li);
+     Total.innerText="TotalUsers : "+Length;
+
+  });
+});   
+
+
+socket.on("receiveCode", ({ userName, code }) => {
+  if(userName!=USERNAME){
+    Changes.style.color="#ED3F27";
+    Changes.innerText=userName+"  is Doing changes ... ."
+    CodeText.value = code;
+  }
+
+});
+socket.on("RoomError", (msg) => {
+  alert("Room clears after refresh if you are only user in Room ! ");
+  window.location.href = "/"; 
+});
+
+ socket.on("receiveOutput", ({ output }) => {
+  outputBox.value = output;
+});
+
+
+    CodeText.addEventListener("input", (event) => {
+      Changes.innerText="You Are Doing changes"
+       Changes.style.color="Yellow";
+
+
+      const currentCode = event.target.value;
+      if (Length>1) {
+       socket.emit("sendCode", {
+      roomNo: ROOM_NUMBER,
+      userName: USERNAME,
+      code: currentCode
+});
+
+      } else {
+      alert("please wait for other user To join!")
+      }
+    });
+    Home.addEventListener("click",()=>{
+        window.location.href = "/"; 
+    })
+    Open.addEventListener("click",()=>{
+      if(USERS.style.display==="none"){
+        USERS.style.display = "block";
+        Open.innerText = "Close User List";
+        Open.style.background = "#D97D55";
+      }
+      
+      else{
+        USERS.style.display = "none";
+        Open.innerText = "Open User List";
+        Open.style.background = "#FAB12F";
+      }
+
+
+    })
+
+
+  </script>
+</body>
+</html>

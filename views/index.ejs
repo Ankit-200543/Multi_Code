@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MultiCode</title>
+    <link rel="icon" type="image/png" href="../public/coding.png">
+
+    <link rel="stylesheet" href="/index.css">
+</head>
+
+<body>
+     <div class="navbar">
+    <div class="brand" >Welcome to MultiCode </div>
+    <button id="Start">Click To Start DuoCode</button>
+  </div>
+<div id="Homepage">
+<h2>A Real time Collaborative Java code editor For Basic Coding</h2>
+<img id="image1" src="/hero.png" alt="image1">
+<h2>Goal and Vision</h2>
+<p>The primary goal of the MultiCode Playground project is to design and implement a robust, simple, two or More-Than two, real-time code editor that facilitates seamless paired programming and technical collaboration. The system is engineered to provide an instantly synchronized workspace where two participants can concurrently write, edit, and observe code updates without latency.
+
+Beyond simply sharing text, the vision is to create an intuitive, browser-based environment that minimizes setup friction, allowing users to jump straight into collaborative coding sessions. This project serves as the foundational architecture for building sophisticated, shared developmental tools, emphasizing reliability in client-server communication and a streamlined user entry process.</p>
+<h2>Target Audience and Application
+</h2>
+<p>MultiCode Playground addresses the growing need for virtual collaborative tools across various professional and educational settings. The target audience includes:</p>
+<ul>
+    <li>Paired Programmers: Teams working remotely who require a shared space for rapid prototyping, debugging, and code reviews.
+</li>
+<li>Students and Educators: Individuals learning to code who benefit from live tutoring, group projects, and immediate feedback from instructors or peers.</li>
+<li>Remote Interviewers/Candidates: Providing a platform for real-time coding challenges during technical assessments, offering a standardized and observable environment for both parties.</li>
+</ul>
+<P>The application is specifically designed for scenarios where instant, synchronous collaboration is paramount, ensuring that distance does not hinder the efficiency and effectiveness of working together on code.</P>
+<h2>MultiCode  allows Mutiple users to </h2>
+<ul>
+    <li>Join or create a room using a room number</li>
+    <li>Write code together in real time</li>
+    <li>View each other’s output instantly</li>    
+</ul>
+<h2>How to Use it ?</h2>
+<h3>1️⃣ Create a Room</h3>
+<ol>
+    <li>Click on “Create Room” on the homepage.</li>
+     <li>A unique Room ID will be generated for you (like 483721).</li>
+      <li>Copy this Room ID and share it with your friend or teammate.</li>
+</ol>
+<h3>2️⃣ Join a Room</h3>
+<ol>
+    <li>Ask your friend for the Room ID they created.</li>
+    <li>Enter your name and the Room ID in the “Join Room” section.</li>
+    <li>Click Join to connect to the shared code room.</li>
+</ol>
+<h3>3️⃣ Start Coding Together</h3>
+<ol>
+    <li>Once both users are connected, you’ll see each other’s names on the top bar.</li>
+     <li>Write or edit code in real-time — both users see the same code instantly.</li>
+    <li>Run your code and both will get the same output at once.</li>
+
+</ol>
+<video id="video" src="/tutorial.mp4" controls></video>
+<a href="https://github.com/Ankit-200543/Duo_code"><img id="github" src="/github.png" alt="git"></a>
+</div>
+
+        <div id="joinExistingRoom" class="option-section" style="display: none; background: white;">
+            <button id="CloseExist">❌</button>
+            <h3>Join Existing Room</h3>
+            <label for="join-room-input">Room Code:</label>
+            <input type="text" id="join-room-input" placeholder="e.g., 123456">
+            
+            <label for="join-name-input">Your Name:</label>
+            <input type="text" id="join-name-input" placeholder="Enter your name">
+            
+            <button id="btn-join" class="action-button">JOIN ROOM</button>
+            <button id="openNew">Create New One</button>
+        </div>
+        
+        <div id="createNew" class="option-section" style="display: none; background: white;">
+        <button id="CloseNew">❌</button>
+            <h3>Create New Room</h3>
+            <label for="create-name-input">Your Name:</label>
+            <input type="text" id="create-name-input" placeholder="Enter your name">
+            
+            <button id="btn-create" class="action-button">CREATE NEW ROOM</button>
+        </div>
+        <form id="joinRoomForm" action="/code" method="POST">
+  <input type="hidden" name="roomNo" id="roomNo">
+  <input type="hidden" name="userName" id="userName">
+</form>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket=io()
+        let id;
+        let Create_btn=document.getElementById("btn-create")
+        let Input_create_user=document.getElementById("create-name-input")
+        const createNew=document.getElementById("createNew");
+        const joinExistingRoom=document.getElementById("joinExistingRoom")
+        
+        const InputUsername=document.getElementById("join-name-input");
+        const InputRoomNo=document.getElementById("join-room-input");
+        const JoinExisting=document.getElementById("btn-join");
+        const Start=document.getElementById("Start");
+        const CloseExist=document.getElementById("CloseExist");
+        const CloseNew=document.getElementById("CloseNew")
+
+
+        Start.addEventListener("click",()=>{
+        joinExistingRoom.style.display="block";
+
+        })
+        openNew.addEventListener("click", () => {
+    joinExistingRoom.style.display = "none";
+        createNew.style.display = "block";
+});
+ CloseExist.addEventListener("click", () => {
+            joinExistingRoom.style.display = "none";
+        });
+
+        CloseNew.addEventListener("click", () => {
+            createNew.style.display = "none";
+        });
+
+socket.on("Connected_Successful", (data) => {
+    id=data;
+    console.log("Successfully connected! My ID:", id);
+});
+
+
+Create_btn.addEventListener("click", () => {
+    let newRoomNO;
+    let NewUserName=Input_create_user.value.trim();
+    if(!NewUserName){
+        alert("please enter your name ")
+        return;
+    }if(NewUserName.length<=10){
+    socket.emit("createNew");
+   socket.on("roomNo",(data)=>{
+    newRoomNO=data;
+    document.getElementById("roomNo").value = newRoomNO;
+  document.getElementById("userName").value = NewUserName;
+Input_create_user.value="";
+  document.getElementById("joinRoomForm").submit();
+//    window.location.href=`code/${newRoomNO}/${NewUserName}`;
+})
+
+    }else{
+        alert("UserName length should be under 10 ")
+    }
+ 
+})
+
+
+JoinExisting.addEventListener("click", () => {
+    let Username=InputUsername.value.trim();
+    let RoomNo=InputRoomNo.value.trim();
+    if(Username && RoomNo){
+        if(RoomNo >=100000 && RoomNo <=999999){
+            if(Username.length<=10){
+            socket.emit("Check",RoomNo);
+              socket.on("RoomCheck", (response) => {
+          if (response === "yes") {
+  document.getElementById("roomNo").value = RoomNo;
+  document.getElementById("userName").value = Username;
+                  InputUsername.value="";
+                 InputRoomNo.value="";
+  document.getElementById("joinRoomForm").submit();
+        }else if(response === "full"){
+        alert("⚠️ Room is already full (30 users allowed only)!");
+        }
+         else {
+        alert("❌ Room not found!");
+        }
+  });
+            }else{
+                InputUsername.value="";
+                alert("Username should be Under 10 digit")
+            }
+        }else{
+            alert("RoomNO should be range from 100000 to 999999 ")
+            InputRoomNo.value="";
+
+        }
+    }else{
+        alert("Please Enter Your Both Fields ")
+    }
+})
+  
+     </script>
+</body>
+</html>
