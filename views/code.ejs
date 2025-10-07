@@ -83,7 +83,7 @@ System.out.println(" Hello from MultiCode! ");
 
     // Socket Initialization and State
     const socket = io();
-    let Length=0;
+    let Length=1;
     let mySocketId = "";
 
     // Logging initial setup
@@ -146,8 +146,7 @@ System.out.println(" Hello from MultiCode! ");
     // 1. Initial Connection Success
     socket.on("Connected_Successful", (data) => {
       mySocketId = data;
-      Length=Length+1;
-      Total.innerText="TotalUsers : "+Length;
+
 
       console.log("Successfully connected! My ID:", mySocketId);
       socket.emit("joinRoom", { roomNo: ROOM_NUMBER, userName: USERNAME });
@@ -172,9 +171,10 @@ socket.on("userList", (users) => {
     const li = document.createElement("p");
     li.textContent =Length +"."+user.username;
     members.appendChild(li);
-     Total.innerText="TotalUsers : "+Length;
 
   });
+     Total.innerText="TotalUsers : "+Length;
+
 });   
 
 
@@ -237,3 +237,4 @@ socket.on("RoomError", (msg) => {
 </body>
 
 </html>
+
