@@ -125,13 +125,12 @@ System.out.println(" Hello from MultiCode! ");
           result.run.stdout ||
           result.run.stderr ||
           "⚠️ No output or an error occurred.";
-        if (otherUserName && otherUserSocketId) {
          socket.emit("output", {
         roomNo: ROOM_NUMBER, // send to entire room
         output: Output
 });
 
-          }
+          
           
       } catch (error) {
         outputBox.value = "❌ Error: " + error.message;
@@ -236,4 +235,5 @@ socket.on("RoomError", (msg) => {
 
   </script>
 </body>
+
 </html>
