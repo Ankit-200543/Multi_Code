@@ -24,7 +24,6 @@ function createRoom() {
   return roomId;
 }
 
-// 2️⃣ Join Room
 function joinRoom(roomId, socketId, username) {
   if (!rooms.has(roomId)) {
     throw new Error("Room not found!");
@@ -34,7 +33,6 @@ function joinRoom(roomId, socketId, username) {
   console.log(`${username} joined room ${roomId}`);
 }
 
-// 3️⃣ Delete Room
 function deleteRoom(roomId) {
   if (rooms.has(roomId)) {
     rooms.delete(roomId);
@@ -43,7 +41,6 @@ function deleteRoom(roomId) {
     console.log(`Room ${roomId} does not exist`);
   }
 }
-// 💡 Helper: Remove user when disconnects
 function removeUser(socketId) {
   for (const [roomId, users] of rooms.entries()) {
     if (users.has(socketId)) {
@@ -82,25 +79,29 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
-
-
-
-// app.get("/Join/:roomNo/:Name", (req, res) => {
-//   const { roomNo, Name} = req.params;
-// });
-// app.get("/code/:roomNo/:Name", (req, res) => {
-//    const roomNo = req.params.roomNo;
-    
-//     const userName = req.params.Name;
-//         res.render("code", { 
-//         roomNo: roomNo, 
-//         userName: userName 
-//     });
-// })
 app.post("/code", (req, res) => {
     const roomNo = req.body.roomNo;
     const userName = req.body.userName;
     res.render("code", { roomNo, userName });
+});
+app.get("/createNew",(req,res)=>{
+      let RoomNO = createRoom();
+      res.send(RoomNO);
+
+})
+app.get("/check/:roomNO", (req, res) => {
+  const roomNO = req.params.roomNO;
+  if (rooms.has(roomNO)) {
+    const usersInRoom = rooms.get(roomNO);
+
+    if (usersInRoom.size >= 30) {
+      res.send("full");
+    } else {
+      res.send("yes");
+    }
+  } else {
+    res.send("No");
+  }
 });
 
 
@@ -109,32 +110,8 @@ io.on("connection", (socket) => {
   console.log("New client connected:", socket.id);
   let id=socket.id;
 
-  // Send welcome message
   socket.emit("Connected_Successful", id);
 
-  // Listen for messages from the client
-  socket.on("createNew",()=>{
-    let RoomNO = createRoom();
-    console.log(RoomNO);
-    socket.emit('roomNo',RoomNO );
-  })
-
-socket.on("Check", (RoomNo) => {
-  if (rooms.has(RoomNo)) {
-    const usersInRoom = rooms.get(RoomNo);
-
-    if (usersInRoom.size >= 30) {
-      // Room already full
-      socket.emit("RoomCheck", "full");
-    } else {
-      // Room exists and has space
-      socket.emit("RoomCheck", "yes");
-    }
-  } else {
-    // Room doesn't exist
-    socket.emit("RoomCheck", "No");
-  }
-});
 socket.on("joinRoom", ({ roomNo, userName }) => {
   if (!rooms.has(roomNo)) {
     console.log(`❌ Room ${roomNo} not found. Cannot join.`);
@@ -160,14 +137,12 @@ socket.on("joinRoom", ({ roomNo, userName }) => {
 });
 
 socket.on("sendCode", ({ roomNo, userName, code }) => {
-  // Broadcast to all others in the room with username
   socket.to(roomNo).emit("receiveCode", {
     userName,
     code
   });
 });
   socket.on("output", ({ roomNo, output }) => {
-    // Emit to everyone in the room
     io.to(roomNo).emit("receiveOutput", { output });
   });
 
@@ -177,17 +152,14 @@ socket.on("sendCode", ({ roomNo, userName, code }) => {
 socket.on("disconnect", () => {
   console.log("Client disconnected:", socket.id);
 
-  // Iterate through all rooms
   rooms.forEach((usersMap, roomNo) => {
     if (usersMap.has(socket.id)) {
       usersMap.delete(socket.id);
 
       if (usersMap.size === 0) {
-        // No users left, delete the whole room
         rooms.delete(roomNo);
         console.log(`Room ${roomNo} deleted because it's empty.`);
       } else {
-        // Still users left, update their list
         const updatedUsers = Array.from(usersMap, ([id, username]) => ({ id, username }));
         io.to(roomNo).emit("userList", updatedUsers);
       }
