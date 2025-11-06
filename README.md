@@ -5,20 +5,7 @@
   No setup, no delay — just instant collaboration right in your browser!
 </p>
 
----
 
-<h2>Problem</h2>
-<p>
-Traditional collaborative coding tools often require complex setup or external software, making real-time multi-user collaboration slow and inconvenient.
-</p>
-
-<h2>Solution</h2>
-<p>
-<b>MultiCode</b> offers a simple, browser-based editor that allows multiple users to code together instantly.  
-It’s designed for teams, classrooms, or developer groups who want to collaborate, debug, or learn together — anytime, anywhere.
-</p>
-
----
 
 <h2>Live Demo</h2>
 <p><a href="https://multi-code.onrender.com/" target="_blank">Try MultiCode here</a></p>
