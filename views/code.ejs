@@ -194,7 +194,27 @@ socket.on("RoomError", (msg) => {
  socket.on("receiveOutput", ({ output }) => {
   outputBox.value = output;
 });
+CodeText.addEventListener('keydown', (e) => {
+  const brackets = {
+    '(': ')',
+    '[': ']',
+    '{': '}',
+    '"': '"',
+    "'": "'"
+  };
 
+  if (brackets[e.key]) {
+    e.preventDefault(); // stop normal typing
+    const start = CodeText.selectionStart;
+    const end = CodeText.selectionEnd;
+    const text = CodeText.value;
+
+    const newText = text.slice(0, start) + e.key + brackets[e.key] + text.slice(end);
+    CodeText.value = newText;
+
+    CodeText.selectionStart = CodeText.selectionEnd = start + 1;
+  }
+});
 
     CodeText.addEventListener("input", (event) => {
       Changes.innerText="You Are Doing changes"
